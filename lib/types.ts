@@ -1,0 +1,6 @@
+export interface Panel {id:string;type:string;title:string;side:'left'|'right'}
+export interface VoiceSettings {engine:'system'|'kokoro';voiceURI:string;kokoroVoice:string;speed:number;muted:boolean}
+export interface StudentConfig {version:number;onboarded:boolean;name:string;title:string;purpose:string;preset:'business'|'creator'|'learning';timezone:string;currency:string;accent:string;provider:'claude'|'codex'|null;goals:string[];panels:Panel[];voice:VoiceSettings}
+export interface Source {id:string;name:string;status:string;capturedAt:string;columns:string[];rowCount:number|null;stale:boolean}
+export interface Job {id:string;workflow:string;question:string;status:string;createdAt:string;finishedAt?:string;summary?:string;error?:string;report?:string}
+export interface State {config:StudentConfig;sources:Source[];tasks:{id:string;title:string;done:boolean}[];notes:{title:string;text:string}[];jobs:Job[];metrics:{label:string;unit:string;period:string;sourceId:string;column:string;aggregation:string;value:number|null;error:string|null}[];providers:Record<string,{installed:boolean;authentication:string}>;runner:{alive:boolean;busy:boolean};workflows:{id:string;label:string;group:string;description:string;enabled:boolean;reason:string|null}[]}

@@ -1,0 +1,47 @@
+{
+  "name": "argus-student-edition",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "setup": "node scripts/setup.mjs",
+    "dev": "next dev -H 127.0.0.1 -p 3117",
+    "build": "next build",
+    "start": "node scripts/start.mjs",
+    "stop": "node scripts/stop.mjs",
+    "doctor": "node scripts/doctor.mjs",
+    "runner": "node runner/runner.mjs",
+    "import": "node scripts/import.mjs",
+    "configure": "node scripts/configure.mjs",
+    "voice:setup": "node scripts/voice-setup.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "typecheck": "tsc --noEmit",
+    "release:check": "node scripts/release-check.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "5.3.0",
+    "@fontsource-variable/plus-jakarta-sans": "5.3.0",
+    "cheerio": "^1.1.2",
+    "csv-parse": "7.0.2",
+    "next": "15.5.25",
+    "pdfjs-dist": "6.3.289",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-markdown": "^10.1.0",
+    "three": "0.176.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@types/three": "^0.176.0",
+    "typescript": "^5.8.0"
+  },
+  "overrides": {
+    "postcss": "8.5.28"
+  }
+}

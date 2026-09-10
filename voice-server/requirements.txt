@@ -1,0 +1,6 @@
+fastapi==0.135.1
+uvicorn==0.42.0
+kokoro-onnx==0.5.0
+faster-whisper==1.2.1
+soundfile==0.13.1
+numpy>=1.26,<3
