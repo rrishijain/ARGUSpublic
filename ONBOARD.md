@@ -30,7 +30,7 @@ Write the intended non-secret settings to `.argus-local/proposed-config.json`. F
 npm run configure -- --from .argus-local/proposed-config.json --confirmed
 ```
 
-For an existing Obsidian vault add `--vault "the selected vault path"`. The command uses its `ARGUS` subfolder. It never overwrites existing notes. Changing a populated workspace is blocked until its data is deliberately copied or exported; do not bypass this by deleting data.
+For an existing Obsidian vault add `--vault "the selected vault path"`. If the preview is running, first use `npm run stop`, then configure and restart it. The command uses the vault's `ARGUS` subfolder. It never overwrites existing notes. Preview-only runner bookkeeping does not count as student data. Changing a workspace containing student data is blocked until that data is deliberately copied or exported; do not bypass this by deleting data.
 
 Import selected files with `npm run import -- --file "path"`, folders with `--folder "path"`, and public pages with `--url "https://example.com"`. Originals and source references are retained. Report skipped files and extraction limits. Unsupported attachments are not analysed until an extraction capability exists.
 
