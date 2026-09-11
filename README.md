@@ -1,101 +1,93 @@
 # ARGUS
 
-### Your world, brought together.
+### Your business, built through conversation.
 
-A personal command centre you make your own through conversation. The finished interface includes a dreamy 3D city, warm DAYBREAK colours, responsive panels, reports, tasks and free voice output. Use it for your business, creative work, studies or personal projects.
+Describe what you do, decide what would help, and build a workspace around it. ARGUS combines a guided business interview, a personal dashboard, conversation, local speech and a browser feature builder. The original DAYBREAK design and 3D city remain the starting point.
 
 ![ARGUS student command centre](docs/images/command-centre.png)
 
 ## Start here
 
-1. **Download:** use GitHub's **Code → Download ZIP**, then unzip the folder. Or clone this repository.
-2. **Open the folder in Claude Code or Codex.** You need your own supported account. Install Node.js **22.13 or later** if it is not already available.
-3. **Paste this prompt:**
+1. Choose **Code → Download ZIP** on GitHub and unzip it, or clone the repository.
+2. Open that folder in your own **Codex or Claude coding assistant**.
+3. Paste:
 
-> Make ARGUS my own. Ask me questions one at a time, understand what I want to build, and customise it using my information. Keep the existing design unless I ask you to change it.
+> Help me start ARGUS. Check this computer, set up the app and local voice, then help me describe my business and build my first useful result. Ask one question at a time, reuse my answers, and let me choose the appearance.
 
-Your assistant reads the included onboarding guide, asks about your goals and sources, confirms the brief, and builds your version. The supplied look and feel stays intact unless you ask to change it. Your answers, information and generated reports stay outside Git.
+Your assistant follows [ONBOARD.md](ONBOARD.md), checks Node.js **22.13+** and your chosen CLI, and starts ARGUS. AI replies need your own supported account and a separately installed, signed-in codex or claude command. A desktop assistant being open does not establish CLI access.
 
-## Preview before personalising
+If Node is already available, these commands work on macOS, Windows PowerShell and Linux:
 
-From the project folder:
+    npm ci
+    npm run setup
+    npm start
 
-```sh
-npm ci
-npm run setup
-npm start
-```
+Open **http://127.0.0.1:3117**. Keep the terminal open. Setup prepares local voice in the background; typed onboarding is available while downloads finish. The first start builds the app. No .env, purchased voice API, global Python installation or copied account credentials are required.
 
-Open **http://127.0.0.1:3117**. Keep the terminal open while using ARGUS. The first start builds the application. Use `npm run stop` from another terminal or Ctrl+C to stop the managed services. There are no `.env` files or API keys required for the basic console and system speech.
+Choose **Start talking** once local listening and speaking are ready. Grant microphone access, speak, and pause to submit a turn. Tap interrupt to stop a reply and speak again. Typed conversation is always available. Stop with npm run stop or Ctrl+C.
 
-macOS, Windows and Linux use the same npm commands. Windows students can use PowerShell. Background AI commands need `claude` or `codex` installed on PATH and signed in separately; having a desktop assistant open is not sufficient. Run `npm run doctor` to see what is available.
+## Build your first useful result
 
-## What you get
+The interview asks about your business, customers, recurring problem, desired first result and selected information. It remembers combined answers and recommends a starting point when you say “you decide.” Review and edit the business/design brief before accepting it. A failed AI request keeps your interview and completed setup intact.
 
-- **Your ARGUS design:** 3D city opening, golden/blue hour, pause and replay, illustration fallback, DAYBREAK panels and typography, responsive layout and keyboard controls.
-- **An adaptable console:** metrics, tasks, notes, reports, sources and command panels, with business, creator and learning starting configurations.
-- **Your knowledge:** import Markdown, text, CSV, JSON, text PDFs and public HTML pages. Preserve originals, source IDs and timestamps. Other attachments are retained with an extraction-needed label.
-- **Five working AI workflows:** Brief Me, Plan Today, Summarise Sources, Ask My Knowledge and Draft Content, using your selected CLI and imported source excerpts.
-- **Free voice output:** choose and preview available device voices. Stop speech with the button or Escape. Your typed requests are always available.
-- **Optional local voice:** Kokoro male/female voices and faster-whisper microphone input.
+| Starter pack | First result | Next things to build |
+| --- | --- | --- |
+| Sales Pipeline | Pipeline review with definitions and follow-up priorities | Weekly targets, lead-source comparison, follow-up tracker |
+| Agency Delivery | Review of client commitments and outstanding work | Project tracker, team capacity, client reports |
+| Content Planning | A practical plan grounded in your business | Editorial calendar, approval tracker, campaign reviews |
 
-Data-backed workflows become available after the interview, provider selection and runner startup. Private account connections are additional integrations, not preconnected services. No personal advertising, sales, email or calendar accounts are included.
+Each pack includes questions, empty CSV templates, fictional records, commands and a first-result example under [examples/packs](examples/packs). Importing a pack is optional. **DEMO records remain labelled as demonstration data; they are never live account results.**
 
-## Add your information
+## Make it yours
 
-Use **Sources → Add a source**, or ask your assistant to run:
+Choose light, dark or device appearance; accent colour; standard or larger text; comfortable or compact density; panel priorities; and a prominent, subtle or still city. Keep DAYBREAK by skipping personalisation. Preferences and business definitions can be edited later.
 
-```sh
-npm run import -- --file "path/to/your-notes.md"
-npm run import -- --folder "path/to/a-folder-you-selected"
-npm run import -- --url "https://example.com/public-page"
-```
+Then ask for a feature:
 
-The importer reads only selected locations, skips hidden files, known credential filenames and symlinks, and preserves originals. Limits: 10 MB per file/page, 100 files per folder import, 200 pages per PDF. Scanned PDFs require a later OCR integration. CSV metrics require confirmed units, column meanings and reporting periods; an imported table alone is not a verified metric.
+> Build a lead follow-up tracker with a form, owner, next contact date and status. Start with demonstration records.
 
-Obsidian is optional. The interview can create an `ARGUS` area inside your selected vault without replacing existing notes. Configuration details: [Configuration guide](docs/configuration.md).
+ARGUS generates dashboards, trackers, forms, tables, calculations and report workflows against a fixed browser SDK. It proposes the build, creates a sandboxed preview, and lets you activate the validated version. Previous versions remain available for rollback. The builder does not install arbitrary dependencies, execute generated server code or connect private accounts. See [Configuration and extensions](docs/configuration.md).
 
-## Optional male/female voice and microphone
+## Bring your information
 
-Install Python **3.10–3.12** (3.12 recommended), then:
+Use **Sources → Add a source**, or ask your coding assistant to run:
 
-```sh
-npm run voice:setup
-npm run stop
-npm start
-```
+    npm run import -- --file "path/to/your-notes.md"
+    npm run import -- --folder "path/to/a-folder-you-selected"
+    npm run import -- --url "https://example.com/public-page"
 
-In **Voice settings**, choose Kokoro, preview Heart or Emma (female), or Michael or George (male), then save. If Python has a nonstandard location, use `npm run voice:setup -- --python "path/to/python"`.
+Markdown, text, CSV, JSON, text PDFs and public HTML pages are supported. Originals, source IDs and capture dates are retained. Hidden files, known credential filenames and symlinks are skipped. Limits are 10 MB per file/page, 100 files per folder import and 200 pages per PDF. Scanned PDFs need OCR; unsupported attachments are marked accordingly.
 
-The installer downloads verified Kokoro models and an English transcription model (approximately 450 MB total plus dependencies). CPU operation is supported. Hold Space outside text fields, or click the microphone control, to record. Review the transcript and press Run. Speech also works without a microphone.
+Metrics need confirmed source, column, aggregation, units and period. Missing data stays missing. Basic dashboard bindings aggregate all imported rows; filter a derived table first when needed. Generated feature tables support explicit row filters. Neither a source badge nor an installed CLI means an external account is connected.
 
-Device voices vary by operating system. Some system voices may use the device vendor's online service; Kokoro runs locally after download. No cloned voices or paid voice API are included.
+An existing Obsidian vault is optional. ARGUS uses its own ARGUS subfolder and preserves existing notes. Your profile, conversation, records and reports survive reopening the app.
 
-## Useful prompts after setup
+## Local conversation audio
 
-- “Turn this into a command centre for my design studio. Keep the existing design.”
-- “Use these lesson notes to build my study dashboard.”
-- “Add my weekly goals and a panel for unfinished projects.”
-- “Import this CSV and ask me to confirm its metric definitions.”
-- “Draft a post based only on the claims supported by my sources.”
+Setup prepares a checksum-verified uv runtime, managed Python 3.12, Kokoro speech and faster-whisper small.en transcription. Model downloads are approximately **820 MB**, plus Python, dependencies and caches. Allow several GB of free storage. Installation progress, retry and skip controls are in the console; verified downloads are reused and the voice service starts without a manual restart.
 
-## What runs where
+Voice options include Heart, Emma, Michael and George at normal speed by default. A conversation listens, transcribes, asks your AI provider, speaks a short reply, then resumes after playback finishes. The complete answer stays in the transcript. Tap-to-interrupt is supported; automatic interruption while ARGUS is speaking is not part of this release. Switching tabs ends microphone capture.
 
-Your files and reports live on your computer. AI commands send selected source excerpts to your chosen provider using your own account and usage limits. Local storage does **not** make AI processing offline. The console and optional voice service bind only to localhost; this starter is not configured for public hosting.
+For a foreground installation or repair:
 
-The starter does not send email, publish content, change ad accounts or automatically connect private services. Ask your assistant to implement the specific integrations you need using your own authorisation.
+    npm run voice:setup
 
-## Development and checks
+Packaged local voice targets macOS 13+ Intel/Apple Silicon, Windows x64 and Linux x64 with glibc 2.28+. Exact device performance and microphone quality vary. See [validation status](docs/validation.md) before treating a platform as physically tested. English is the supported transcription language.
 
-```sh
-npm start -- --dev
-npm test
-npm run typecheck
-npm run build
-npm run release:check
-```
+Kokoro and transcription operate locally after installation. AI replies still use your provider, network connection and account limits. Device/system voices remain an alternative and may use the operating-system vendor’s services.
 
-The command centre uses Next.js, React and Three.js. It retains the original ARGUS city and design styles. Fonts are packaged locally. See [Architecture](docs/architecture.md), [Troubleshooting](docs/troubleshooting.md) and [Validation](docs/validation.md).
+## Development and sharing
+
+    npm start -- --dev
+    npm test
+    npm run typecheck
+    npm run build
+    npm run test:e2e
+    npm run release:check
+
+Share the clean GitHub download, not a ZIP of your personalised working folder. Git ignores configuration, student work, recordings, models and caches, but that does not remove them from a manually created ZIP. The release checker inspects tracked files and requires a Git checkout.
+
+ARGUS runs on localhost (3117 for the console; 3118 for voice). It is not configured for public hosting. Sending, publishing, private-account integrations and paid voice services are outside this release. See [Architecture](docs/architecture.md), [Troubleshooting](docs/troubleshooting.md) and [Validation](docs/validation.md).
 
 ## Licence
 

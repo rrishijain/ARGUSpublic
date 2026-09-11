@@ -5,7 +5,12 @@ export const WORKFLOWS = [
   {id:'plan',label:'Plan Today',group:'Create',description:'Turn your goals and tasks into a realistic daily plan.',instruction:'Draft a realistic plan for today based on the supplied goals and tasks. Do not claim to know calendar events or deadlines that were not supplied.'},
   {id:'draft',label:'Draft Content',group:'Create',description:'Turn verified knowledge into a useful first draft.',instruction:'Write the requested content as a draft. Use supported claims, preserve qualifications, and list the source IDs used. Do not invent testimonials, prices or results.'},
 ];
-export const workflow = id => WORKFLOWS.find(w=>w.id===id);
+// Capabilities share the bounded runner but are not exposed as report buttons.
+export const CAPABILITIES=[
+  {id:'conversation',instruction:'Return validated conversational JSON using the supplied response contract. No tools, external actions or shell commands are permitted.'},
+  {id:'build',instruction:'Generate a feature bundle for the fixed ARGUS browser SDK only. Do not execute tools, install packages or generate server code.'},
+];
+export const workflow = id => [...WORKFLOWS,...CAPABILITIES].find(w=>w.id===id);
 export function routeText(text) {
   if(/^\s*(brief me|morning briefing|give me a briefing)[.!]?\s*$/i.test(text)) return 'brief';
   if(/^\s*(plan (my )?today|plan my day)[.!]?\s*$/i.test(text)) return 'plan';

@@ -21,3 +21,5 @@ voice-server/.venv/
 voice-server/models/
 **/__pycache__/
 test-results/
+playwright-report/
+public/voice-assets/

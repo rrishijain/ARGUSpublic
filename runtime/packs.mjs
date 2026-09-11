@@ -1,0 +1,17 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {importBuffer} from './sources.mjs';
+
+const assetRoot=path.join(process.cwd(),'examples','packs');
+export const PACKS=[
+  {id:'sales',version:1,title:'Sales Pipeline',description:'Understand your leads, qualification and won sales.',preset:'business',questions:['What do you sell and who buys it?','What makes a lead qualified?','Which pipeline decision would help this week?'],columns:['lead','stage','value','created_date','owner'],firstPrompt:'Review the sales pipeline. State the snapshot period and whether records are demonstration data. Explain qualification and sales counts, identify missing definitions, and suggest three useful follow-ups.',commands:['Review my pipeline','Explain conversion stages','Prepare follow-up priorities'],nextBuilds:['Weekly target tracker','Lead source comparison','Follow-up preparation'],example:'DEMONSTRATION: 6 leads, 2 currently qualified, 2 won. Current stage counts do not establish historical conversion. Clarify your qualification definition before applying it to real records.',files:['template.csv','DEMO - sales pipeline.csv','guide.md']},
+  {id:'agency',version:1,title:'Agency Delivery',description:'Review client commitments, ownership and outstanding delivery.',preset:'business',questions:['Which services do you deliver?','Where do projects get delayed?','What should you know before the next client update?'],columns:['client','project','owner','status','due_date','hours_remaining'],firstPrompt:'Prepare an agency delivery review. Label demonstration records, list upcoming or overdue commitments based on their explicit dates, and propose three delivery priorities. Do not infer profitability or client sentiment.',commands:['Review client delivery','Find unassigned work','Draft a client update'],nextBuilds:['Client project tracker','Team capacity table','Weekly client report'],example:'DEMONSTRATION: 4 projects; 1 blocked and 1 without an owner. Resolve the blocked landing page and assign the reporting project. Dates are illustrative, not current commitments.',files:['template.csv','DEMO - agency delivery.csv','guide.md']},
+  {id:'content',version:1,title:'Content Planning',description:'Turn business knowledge into an achievable publishing plan.',preset:'creator',questions:['Who should your content help?','Which channels do you use?','What makes creating or publishing difficult?'],columns:['title','channel','status','publish_date','owner','goal'],firstPrompt:'Create a realistic content plan from selected information. Clearly identify demonstration content, distinguish drafts from published work, and propose three next actions without inventing performance results.',commands:['Plan next week’s content','Repurpose this idea','Draft a campaign brief'],nextBuilds:['Editorial calendar','Content approval tracker','Performance review table'],example:'DEMONSTRATION: 5 ideas across LinkedIn, email and video. Two are drafts and one is scheduled. Start by finishing an existing draft; no performance results have been supplied.',files:['template.csv','DEMO - content planning.csv','guide.md']},
+];
+export const packFor=id=>PACKS.find(pack=>pack.id===id);
+export async function importPack(dir,id) {
+  const pack=packFor(id);if(!pack)throw new Error('Choose an available starter pack.');
+  const names=pack.files.filter(name=>name.startsWith('DEMO'));
+  const sources=[];for(const name of names)sources.push(await importBuffer(dir,fs.readFileSync(path.join(assetRoot,id,name)),name,`demo:pack:${id}`));
+  return {pack,sources};
+}

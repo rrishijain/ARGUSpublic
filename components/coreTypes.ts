@@ -18,6 +18,7 @@ export interface CelebrateSignal {
 }
 
 export interface CoreProps {
+  presentation?: 'prominent' | 'subtle' | 'still';
   mode?: CoreMode;
   /** one wire per channel of the wall — see lib/strands.ts */
   strands?: Strand[];

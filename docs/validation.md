@@ -1,29 +1,56 @@
 # Release validation
 
-Validated on macOS on 10 September 2026 using Node.js 24, Python 3.12 and Chromium. The automated core suite has 26 tests. The repository also runs installation, tests, type checking, production build, release checks and dependency auditing on macOS, Windows and Linux through GitHub Actions.
+This is the ARGUS 2.0 beta validation guide. Separate automated coverage, current release evidence and participant testing: an available installer or a passing fixture does not establish microphone quality on every laptop.
 
-## Completed checks
+## Recorded release evidence — 11 September 2026
 
-- Previewing the console before onboarding does not prevent selecting a new Obsidian vault; runner bookkeeping is distinguished from student data.
-- All three presets save, complete onboarding and accept later customisation. Interrupted interview answers merge without losing previous answers. Existing Obsidian notes and settings remain unchanged. Changing a populated workspace is blocked without deleting data.
-- All five workflows execute through the job runner with controlled provider responses across business, creator and learning configurations. Real authenticated Claude and Codex CLI requests also completed. A real Claude briefing and Codex content draft used fictional course notes and returned source references.
-- Markdown, text, CSV, JSON, HTML and text PDF extraction, attachment fallback, duplicate handling, simultaneous imports, original byte preservation, confirmed numeric metrics and missing data handling passed. Extracted output filenames cannot overwrite originals.
-- A browser button was tested through the live HTTP queue, local runner and authenticated Codex CLI to a saved report; the report overlay displayed its source citation. Fictional test data was then removed.
-- Local/private URLs and unsupported URL protocols are rejected. API host/origin checks reject unrelated sites. Unconfigured workflows remain disabled. Invalid configuration is reported without replacing saved preferences.
-- Desktop at 1512 pixels, narrow screens at 390 and 320 pixels, native dialog focus and Escape, reduced motion, real WebGL rendering, and a deliberately disabled WebGL illustration fallback were exercised. There were no uncaught browser errors in the production interaction checks.
-- Real Kokoro female (Heart) and male (Michael) synthesis succeeded with non-default speed. The local microphone transcription engine recovered the expected sentence from each generated WAV. Browser preview correctly requests the selected voice. Microphone denial retains typed input; Stop cancels playback.
-- A clean source export started and stopped successfully with no AI CLI on PATH and no voice models. Missing capabilities were reported explicitly.
-- A clean source export installed dependencies and passed type checking, the core tests and a production build without copied configuration, private skills or voice models.
-- Controlled browser speech tests cover cross-tab cancellation, local-voice failure falling back to system speech, and speech unavailability falling back to text. These tests verify behavior, not the availability or sound quality of a particular device voice.
-- Public HTML import and a real HTTP 404 were exercised.
-- Production build, TypeScript checking and the core tests pass. npm dependency audit reports no known vulnerabilities at validation time.
+- All 76 Node tests and all 9 Chromium browser tests pass. Type checking and the production build pass on the development Mac. The npm dependency audit reports zero known vulnerabilities at this checkpoint.
+- Three real authenticated Codex calls used fictional Juniper Lantern business context. The first saved a target of 17 (14.8 seconds); the follow-up recalled that target (18.3 seconds). A subsequent build request produced a valid feature-build proposal and a compiled tracker with only records.read/records.write capabilities and three demonstration records (73.5 seconds). The build required no automatic repair.
+- The installed Kokoro/faster-whisper stack completed a real generated-speech round trip: synthesis took 290 ms and transcription 779 ms for the test sentence. These are one-machine observations, not promised response times.
+- A two-turn Chrome audio check exercised local voice-activity detection, submission and playback. The test reply played for 2.03 seconds before listening resumed. This controlled audio test does not establish human microphone or Indian-accent recognition quality.
+- The production Next.js browser path also passed with real local speech/transcription and controlled AI replies: two automatic turns, no live microphone tracks during playback, tap interruption in 74 ms, all tracks released on exit, and typed fallback after simulated microphone denial. Repeat with `node scripts/voice-browser-check.mjs --production` while the app and local voice service are running.
+- A clean GitHub commit ZIP installed with `npm ci` and passed all 75 Node tests, type checking and production build without Git metadata or copied personal/runtime state. This Mac still had global Git/Python available; the test does not claim those programs were physically absent.
+- A human participant pilot, including Indian accents, has not been performed. Hosted platform installation results and physical device coverage remain separate release evidence.
+
+## Automated coverage
+
+The Node suites cover configuration v1 migration with backups; retained onboarding answers; combined answers and appearance defaults; workspace/vault preservation; first-report failure; malformed conversational output; deduplication; cancellation and stale replies; remembered context; explicit local actions; shared queue priority; demonstration packs; selected-source restrictions; feature compilation, permissions, preview isolation, activation and rollback; and voice installer failure/retry controls.
+
+Existing extraction and workflow tests retain original bytes, selected-source boundaries, missing-data behavior and tool-free provider invocations. Provider responses in these tests are controlled fixtures and do not use a participant's account.
+
+Browser tests run in Chromium with controlled responses. They exercise onboarding, appearance, conversation and relevant responsive/accessibility behavior. They do not prove natural conversational quality or physical microphone performance.
+
+The regular GitHub Actions matrix runs npm installation, Node tests, type checking, production build, release checks and dependency auditing on Ubuntu, macOS and Windows. Ubuntu additionally runs Chromium browser checks.
+
+## Real voice installation checks
+
+The **Student edition checks** workflow runs the real voice installation matrix on pull requests before merge. It can also be triggered manually with the voice_smoke option. It installs the pinned uv/Python/dependency/model stack on hosted Ubuntu, macOS and Windows and performs real Kokoro synthesis plus faster-whisper transcription. It needs no AI account. Its generated speech round trip checks engine operation, not recognition of human accents.
+
+The three real voice jobs passed both fresh and repeated setup in [run 34579657206](https://github.com/rrishijain/ARGUSpublic/actions/runs/34579657206). The Windows dependency fix pins setuptools 81 because CTranslate2 4.6 uses its legacy resource module for DLL discovery. Application checks are also required before merge; consult the latest PR check summary for their final status.
+
+| Intended package target | Executed voice-install evidence | Remaining coverage |
+| --- | --- | --- |
+| macOS 13+ Apple Silicon | Hosted macOS 26.6.2 arm64: fresh/repeated installation and speech roundtrip passed; local production browser audio also passed | macOS 13 itself and human microphones/accents |
+| macOS 13+ Intel | Compatible binary-only dependency resolution passed | Real Intel installation, inference and audio testing |
+| Windows x64 | Hosted Windows Server 2025 x64: fresh/repeated installation and speech roundtrip passed | Physical Windows desktop microphone testing; the pinned ONNX runtime warns about the server OS name despite successful inference |
+| Linux x64, glibc 2.28+ | Hosted Ubuntu 24.04.5 x64: fresh/repeated installation and speech roundtrip passed | Oldest glibc baseline execution and physical microphone testing |
+
+Voice artifact/platform verification covers macOS 13+ Intel/Apple Silicon, Windows x64 and Linux x64 with glibc 2.28+ as intended package targets. A passing latest-runner job is not evidence that the oldest supported OS or every physical architecture was tested. Record actual workflow results and device details before promising classroom compatibility.
+
+Before publication, run the full application checks and the real voice workflow, inspect failures, and test a clean GitHub ZIP without copied configuration/models. Verify repeated setup, cancelled/corrupt downloads, moved folders, occupied ports and typed fallback. Store only non-secret status/timing output as CI artifacts.
+
+## Participant pilot still required
+
+Human onboarding quality and English recognition with Indian accents need a classroom pilot. Use business names, amounts, dates and ambiguous terminology; inspect corrections rather than treating a generated-audio round trip as an accent benchmark.
+
+Have at least five participants with different business cases complete setup, get a useful result, ask a spoken follow-up, build and activate one small feature, interrupt a reply, and reopen the work the next day. Record OS/CPU, install duration, recognition errors, transcription/AI/playback latency and any assistance needed.
+
+Also check real microphone permission/denial, headphones and laptop speakers, tab switching, larger text, contrast, keyboard navigation, narrow screens and reduced motion. Physical Mac/Windows/Linux audio validation and this human pilot must not be described as completed until performed.
 
 ## Practical limits
 
-A conversation is guided by the included agent instructions; its wording and quality depend on the student's chosen assistant. Automated onboarding checks verify saved progress, configuration and preservation, rather than pretending to be a human student completing a live interview.
+AI responses and citations need review. Context is bounded; selected sources may be truncated. Imported data is a snapshot, DEMO records are fictional, and source indicators do not imply account connections. Basic dashboard metric periods label imported rows and do not apply hidden date filters.
 
-Windows and Linux are covered by the CI matrix for the Node application. Physical microphone capture, audio quality, GPU performance, device voice availability and optional local voice installation still vary by computer. Confirm them on the student's device. Browser speech uses the system's available voices; a voice present on one laptop is not guaranteed elsewhere.
+Typed conversation needs the student's installed, signed-in CLI and account access. Speech becomes local after installation, but provider responses remain online. This beta supports English and tap-to-interrupt, not automatic interruption during playback. Large or invalid feature builds may require a narrower request.
 
-AI output and citations need review. Context is bounded and may omit or truncate sources; imported data is a saved snapshot. The source health indicators do not imply live account connectivity. Private integrations and outbound actions are additional work.
-
-Screenshots show the sanitised starter with no connected accounts or personal information. Optional voice models, local configuration, runtime data and reports are excluded from the release.
+The release checker scans tracked files and requires Git metadata. A manually zipped working directory can include ignored personal data, so distribute the repository ZIP or a clean tracked-file export. Configuration, reports, recordings, caches and downloaded models are not public release assets.

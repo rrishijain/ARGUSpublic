@@ -1,0 +1,5 @@
+client,project,owner,status,due_date,hours_remaining
+DEMO Acorn,Website,DEMO Alex,in progress,2026-01-20,8
+DEMO Birch,Landing page,DEMO Sam,blocked,2026-01-18,6
+DEMO Cedar,Reporting,,planned,2026-01-22,3
+DEMO Elm,Campaign,DEMO Alex,complete,2026-01-15,0

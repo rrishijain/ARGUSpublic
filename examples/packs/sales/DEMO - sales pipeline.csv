@@ -1,0 +1,7 @@
+lead,stage,value,created_date,owner
+DEMO Lead A,new,200,2026-01-05,DEMO Alex
+DEMO Lead B,qualified,500,2026-01-06,DEMO Sam
+DEMO Lead C,won,500,2026-01-07,DEMO Alex
+DEMO Lead D,qualified,300,2026-01-08,DEMO Sam
+DEMO Lead E,lost,400,2026-01-09,DEMO Alex
+DEMO Lead F,won,200,2026-01-10,DEMO Sam
