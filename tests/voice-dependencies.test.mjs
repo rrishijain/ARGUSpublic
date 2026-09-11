@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
 test('Windows CTranslate2 DLL discovery retains its hash-pinned pkg_resources dependency',()=>{
-  const direct=fs.readFileSync('voice-server/requirements.txt','utf8'),lock=fs.readFileSync('voice-server/requirements.lock','utf8');
+  const direct=fs.readFileSync('voice-server/requirements.txt','utf8').replace(/\r\n/g,'\n'),lock=fs.readFileSync('voice-server/requirements.lock','utf8').replace(/\r\n/g,'\n');
   // CTranslate2 v4.6.0/python/ctranslate2/__init__.py imports pkg_resources only on win32.
   // setuptools removed that module in 82.0.0, so macOS-only inference cannot catch this drift.
   if(/^ctranslate2==4\.6\.0$/m.test(direct)){

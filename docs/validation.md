@@ -24,7 +24,16 @@ The regular GitHub Actions matrix runs npm installation, Node tests, type checki
 
 ## Real voice installation checks
 
-The **Student edition checks** workflow runs the real voice installation matrix on pull requests before merge. It can also be triggered manually with the voice_smoke option. It installs the pinned uv/Python/dependency/model stack on hosted Ubuntu, macOS and Windows and performs real Kokoro synthesis plus faster-whisper transcription. It needs no AI account. Its generated speech round trip checks engine operation, not recognition of human accents. Hosted results for this release are pending until those jobs finish.
+The **Student edition checks** workflow runs the real voice installation matrix on pull requests before merge. It can also be triggered manually with the voice_smoke option. It installs the pinned uv/Python/dependency/model stack on hosted Ubuntu, macOS and Windows and performs real Kokoro synthesis plus faster-whisper transcription. It needs no AI account. Its generated speech round trip checks engine operation, not recognition of human accents.
+
+The three real voice jobs passed both fresh and repeated setup in [run 34579657206](https://github.com/rrishijain/ARGUSpublic/actions/runs/34579657206). The Windows dependency fix pins setuptools 81 because CTranslate2 4.6 uses its legacy resource module for DLL discovery. Application checks are also required before merge; consult the latest PR check summary for their final status.
+
+| Intended package target | Executed voice-install evidence | Remaining coverage |
+| --- | --- | --- |
+| macOS 13+ Apple Silicon | Hosted macOS 26.6.2 arm64: fresh/repeated installation and speech roundtrip passed; local production browser audio also passed | macOS 13 itself and human microphones/accents |
+| macOS 13+ Intel | Compatible binary-only dependency resolution passed | Real Intel installation, inference and audio testing |
+| Windows x64 | Hosted Windows Server 2025 x64: fresh/repeated installation and speech roundtrip passed | Physical Windows desktop microphone testing; the pinned ONNX runtime warns about the server OS name despite successful inference |
+| Linux x64, glibc 2.28+ | Hosted Ubuntu 24.04.5 x64: fresh/repeated installation and speech roundtrip passed | Oldest glibc baseline execution and physical microphone testing |
 
 Voice artifact/platform verification covers macOS 13+ Intel/Apple Silicon, Windows x64 and Linux x64 with glibc 2.28+ as intended package targets. A passing latest-runner job is not evidence that the oldest supported OS or every physical architecture was tested. Record actual workflow results and device details before promising classroom compatibility.
 
