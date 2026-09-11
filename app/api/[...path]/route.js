@@ -6,6 +6,9 @@ import {getState,addTask,toggleTask} from '../../../runtime/state.mjs';
 import {sourcesFor,importBuffer,importURL,MAX_BYTES} from '../../../runtime/sources.mjs';
 import {enqueue,cancelJob,jobsFor} from '../../../runtime/jobs.mjs';
 import {routeText} from '../../../runtime/workflows.mjs';
+import {handleConversationRequest,conversationQueue,conversationEvents} from '../../../runtime/conversations.mjs';
+import {handleFeatureRequest} from '../../../runtime/features.mjs';
+import {readVoiceInstall,startVoiceInstall,cancelVoiceInstall,voiceInstance} from '../../../runtime/voice-install.mjs';
 export const dynamic='force-dynamic';
 export const runtime='nodejs';
 const json=(data,status=200)=>NextResponse.json(data,{status,headers:{'Cache-Control':'no-store'}});
@@ -21,9 +24,14 @@ async function limited(req,max=MAX_BYTES+1024*1024) {
 }
 async function handle(req,ctx) {
   try {
-    guard(req);const action=(await ctx.params).path.join('/'),c=loadConfig(),dir=workspace(c);
+    guard(req);const action=(await ctx.params).path.join('/'),c=loadConfig(),dir=workspace(c),url=new URL(req.url);
     if(req.method==='GET') {
+      if(action==='conversation/events')return new Response(conversationEvents(url.searchParams.get('id'),c,process.cwd(),{signal:req.signal}),{headers:{'Content-Type':'text/event-stream','Cache-Control':'no-store','Connection':'keep-alive','X-Accel-Buffering':'no'}});
       if(action==='state')return json(getState());
+      if(action==='setup') {const state=getState();return json({application:'ready',voice:readVoiceInstall(),provider:c.provider,providers:state.providers,runner:state.runner,onboarded:c.onboarded});}
+      if(action==='voice/install')return json(readVoiceInstall());
+      const conversation=await handleConversationRequest({action,method:'GET',data:{},url,config:c});if(conversation!==null)return json(conversation);
+      const feature=await handleFeatureRequest({action,method:'GET',data:{},url,config:c});if(feature!==null)return json(feature);
       if(action==='report') {
         const id=new URL(req.url).searchParams.get('id');const job=jobsFor(dir).find(j=>j.id===id&&j.status==='completed');if(!job)return json({error:'Report not found.'},404);
         return json({title:job.workflow,text:fs.readFileSync(within(dir,job.report),'utf8')});
@@ -32,7 +40,7 @@ async function handle(req,ctx) {
         const id=new URL(req.url).searchParams.get('id'),s=sourcesFor(dir).find(s=>s.id===id);if(!s)return json({error:'Source not found.'},404);
         return json({title:s.name,text:fs.readFileSync(within(dir,s.text),'utf8')});
       }
-      if(action==='voice/health') {try{const r=await fetch('http://127.0.0.1:3118/health',{signal:AbortSignal.timeout(1000)});return json(await r.json());}catch{return json({ok:false,stt:false});}}
+      if(action==='voice/health') {try{const r=await fetch('http://127.0.0.1:3118/health',{signal:AbortSignal.timeout(1000)}),health=await r.json();return json(health.instance===voiceInstance()?health:{ok:false,stt:false});}catch{return json({ok:false,stt:false});}}
     }
     if(req.method==='POST') {
       if(action==='import/file') {
@@ -40,19 +48,23 @@ async function handle(req,ctx) {
         return json(await importBuffer(dir,Buffer.from(await f.arrayBuffer()),f.name,'upload',f.type));
       }
       if(action==='voice/stt') {
-        const b=await limited(req,15*1024*1024);const r=await fetch('http://127.0.0.1:3118/stt',{method:'POST',headers:{'Content-Type':req.headers.get('content-type')||'audio/webm'},body:b,signal:AbortSignal.timeout(60000)});if(!r.ok)throw new Error('Local transcription is unavailable. Use typed commands or run npm run voice:setup.');return json(await r.json());
+        const b=await limited(req,15*1024*1024);const r=await fetch('http://127.0.0.1:3118/stt',{method:'POST',headers:{'Content-Type':req.headers.get('content-type')||'audio/webm','x-argus-instance':voiceInstance()},body:b,signal:AbortSignal.timeout(60000)});if(!r.ok)throw new Error('Local transcription is unavailable. Typed conversation still works; retry voice setup in settings.');return json(await r.json());
       }
-      const data=JSON.parse((await limited(req,30000)).toString('utf8')||'{}');
-      if(action==='settings') {const allowed={};for(const k of ['name','title','accent','voice','provider'])if(k in data)allowed[k]=data[k];return json(publicConfig(saveConfig({...c,...allowed})));}
+      const data=JSON.parse((await limited(req,action==='features/capability'?300000:100000)).toString('utf8')||'{}');
+      if(action==='voice/install')return json(await startVoiceInstall({retry:data.retry===true}));
+      if(action==='voice/cancel')return json(await cancelVoiceInstall());
+      const conversation=await handleConversationRequest({action,method:'POST',data,url,config:c});if(conversation!==null)return json(conversation);
+      const feature=await handleFeatureRequest({action,method:'POST',data,url,config:c});if(feature!==null)return json(feature);
+      if(action==='settings') {const allowed={};for(const k of ['name','title','accent','voice','provider','appearance','businessProfile','panels'])if(k in data)allowed[k]=data[k];return json(publicConfig(saveConfig({...c,...allowed,voice:{...c.voice,...allowed.voice},appearance:{...c.appearance,...allowed.appearance}})));}
       if(action==='tasks')return json(data.id?toggleTask(dir,data.id,data.done)||{ok:true}:addTask(dir,data.title));
       if(action==='import/url'){if(typeof data.url!=='string'||data.url.length>4000)throw new Error('Enter a public URL.');return json(await importURL(dir,data.url));}
       if(action==='queue') {const state=getState(),id=data.workflow||routeText(data.question||''),w=state.workflows.find(w=>w.id===id);if(!w?.enabled)throw new Error(w?.reason||'Workflow unavailable.');return json(enqueue(dir,id,data.question||''));}
-      if(action==='cancel'){cancelJob(dir,data.id);return json({ok:true});}
+      if(action==='cancel'){const queue=conversationQueue(process.cwd());cancelJob(jobsFor(dir).some(j=>j.id===data.id)?dir:queue,data.id);return json({ok:true});}
       if(action==='voice/speak') {
         if(typeof data.text!=='string'||!data.text.trim()||data.text.length>2000)throw new Error('Speech text must be 1–2,000 characters.');
         const selected=data.voice??c.voice.kokoroVoice,speed=data.speed??c.voice.speed;
         if(!['af_heart','am_michael','bf_emma','bm_george'].includes(selected)||!Number.isFinite(speed)||speed<0.5||speed>2)throw new Error('Invalid voice preview settings.');
-        const r=await fetch('http://127.0.0.1:3118/speak',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:data.text,voice:selected,speed}),signal:AbortSignal.timeout(60000)});if(!r.ok)throw new Error('Local speech is unavailable.');return new Response(r.body,{headers:{'Content-Type':'audio/wav','Cache-Control':'no-store'}});
+        const r=await fetch('http://127.0.0.1:3118/speak',{method:'POST',headers:{'Content-Type':'application/json','x-argus-instance':voiceInstance()},body:JSON.stringify({text:data.text,voice:selected,speed}),signal:AbortSignal.timeout(60000)});if(!r.ok)throw new Error('Local speech is unavailable.');return new Response(r.body,{headers:{'Content-Type':'audio/wav','Cache-Control':'no-store'}});
       }
     }
     return json({error:'Not found.'},404);

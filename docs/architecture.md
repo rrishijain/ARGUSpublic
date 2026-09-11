@@ -1,23 +1,47 @@
 # How ARGUS works
 
-```text
-Claude Code / Codex interview
-          ↓
-Local configuration + student-selected source imports
-          ↓
-Next.js console ← workspace files → single local runner
-       ↓                             ↓
-System speech or Kokoro       Claude / Codex CLI
-       ↑                             ↓
-Spoken summary ← report + completion record
-```
+    Coding assistant checks Node and the participant's own CLI
+                         ↓
+       Setup starts app and local voice preparation
+                         ↓
+        Typed or spoken adaptive business interview
+                         ↓
+        Editable brief → confirmed workspace/profile
+                         ↓
+          Conversation + dashboard + feature builder
+                         ↓
+             One local AI runner, tool-free
+                 ↙          ↓          ↘
+        Structured reply  Markdown   Browser feature bundle
+                 ↓        report        ↓
+       Validated local proposals    Sandboxed preview → activation
 
-The city scene and DAYBREAK styles are the supplied ARGUS design. Panel content is driven by configuration. One registry defines the five bundled workflows. Typed commands, buttons and reviewed microphone transcripts all enter the same queue.
+The original city and DAYBREAK styles are the defaults. Configuration controls content, panel ordering and supported appearance choices. The shared workflow registry contains five reports plus separate conversation/build capabilities. Provider credentials stay with the student's authenticated CLI; ARGUS does not copy credentials or read global environment files.
 
-The importer keeps original bytes and readable extraction notes. It does not execute imported instructions. Runtime AI context is limited to 70,000 characters total and 18,000 per source; truncation and omitted sources are explicitly described to the model. Sources are ranked by query terms and capture time. Confirmed metrics are included alongside source excerpts, with units, periods and errors. Reports are prompted to cite source IDs; citations still need human review. Student-provided metrics require confirmed mappings and are calculated deterministically from the selected table, not invented by the model.
+## State and conversation
 
-The runner executes one job at a time. Active duplicates reuse the same job. A restarted in-flight task is marked failed rather than silently spending the student's account on a retry. Cancelling a job prevents its late result from being published as completed. AI output is rendered as Markdown without raw HTML execution.
+Configuration v2 adds a business profile, appearance, selected starter pack, first-result status and active feature pointers. Loading v1 makes a local backup and preserves existing data, provider, voice and completed onboarding. Invalid JSON is reported without replacing the file.
 
-No private skills, environment files, account keys or external agent projects are required. Config, imported data, reports, runtime sessions, caches and models are ignored by Git. A release checker scans the tracked distribution. CLI authentication stays with the student's provider and is never copied into the project.
+Unfinished interviews and conversational queue records live under .argus-local, outside the unconfirmed workspace. Answers persist in .argus-onboarding.json. Acceptance preserves answers and copies transcripts into the chosen workspace. A failed first report does not undo onboarding.
 
-The optional voice service exposes only health, speech and transcription on localhost. Models are fetched from pinned upstream URLs with SHA-256 checks for Kokoro. Transcription is English and CPU-based; microphone data is not written to disk by ARGUS.
+Each conversation saves both roles, request IDs and a revision. Context includes the business profile, the latest 12 turns (bounded individually), an extractive summary of older turns (up to 14,000 characters), and relevant selected-source excerpts. The complete saved transcript remains available. Replies must match a validated JSON contract. Invalid output cannot partially update the interview or apply actions. Task, note, settings, report and feature-build proposals require application through local handlers.
+
+The runner holds one root lock and executes one AI job at a time. Queued conversation takes priority over queued reports/builds; active work is not pre-empted. Duplicate request IDs reuse their original job. Cancellation changes the session revision and prevents stale replies from updating state. Interrupted work remains recoverable without silently retrying the account.
+
+## Sources and features
+
+The importer preserves original bytes and extracted text, IDs and dates. It never executes imported instructions. Report context is bounded to 70,000 source characters and 18,000 per source, ranked by query terms/capture time. Coverage limits are supplied to the model. Source citations and AI interpretation still need review. DEMO pack sources are explicitly marked as fictional.
+
+Basic dashboard metrics calculate deterministically over their imported rows after confirmed bindings. Their period label does not itself filter rows. Feature source queries support explicit filters and deterministic aggregations; source IDs are limited by the selected feature permissions.
+
+Generated browser features compile against bundled React and the fixed ARGUS SDK. They cannot import arbitrary packages or execute server code. A sandboxed frame, restrictive content policy and a channel-checked message bridge mediate capabilities. The server validates feature/version tokens, selected sources, record schema and preview permissions. Preview records are separate from active records; preview cannot write workspace tasks, notes or reports.
+
+Validated artifacts are immutable and hash checked. Activation points to that exact version; rollback changes code without deleting feature records. Schema changes are additive, keeping previous fields/types and making new fields optional. Builds get one repair attempt for invalid/failed compilation, then an explicit retry. See [Feature SDK](feature-sdk.md).
+
+## Local speech
+
+Setup automatically manages a checksum-pinned uv bootstrap, Python 3.12, hashed binary dependencies and pinned speech models in .argus-local/voice. Verified downloads are reused; incomplete installations can retry and moved environments are repaired. Setup self-tests synthesis and English recognition separately and performs a speech-to-transcription round trip.
+
+Locally served voice-activity assets detect turns. The browser stops listening while the provider thinks and audio plays, then resumes after playback. Tap interrupts; ending a session or losing the active tab releases microphone capture. A single tab owns the microphone. A 1.4-second ending silence and 45-second maximum turn are defaults.
+
+The voice service binds to localhost:3118, uses instance ownership checks, preloads Kokoro and CPU INT8 faster-whisper small.en, and never downloads during a request. Recordings are processed in memory. Local speech does not make the CLI provider offline. Service readiness, account failures and audio errors are displayed separately; text remains usable.

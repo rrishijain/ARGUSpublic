@@ -43,7 +43,7 @@ function StillCity() {
   );
 }
 
-export default function CityCore({ mode = "idle", strands, readout, getLevel, celebrate }: CoreProps) {
+export default function CityCore({ mode = "idle", strands, readout, getLevel, celebrate, presentation = "prominent" }: CoreProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const [mood, setMood] = useState<CityMood>("golden");
   const [paused, setPaused] = useState(false);
@@ -61,9 +61,14 @@ export default function CityCore({ mode = "idle", strands, readout, getLevel, ce
     const onMotion = () => setReduced(mq.matches);
     onMotion();
     mq.addEventListener("change", onMotion);
+    if (presentation === 'still') {
+      setAvailable(false);
+      return () => mq.removeEventListener('change', onMotion);
+    }
     let renderer: THREE.WebGLRenderer;
     try {
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "low-power" });
+      setAvailable(true);
     } catch {
       setAvailable(false);
       return () => mq.removeEventListener("change", onMotion);
@@ -162,10 +167,10 @@ export default function CityCore({ mode = "idle", strands, readout, getLevel, ce
     };
     // Prop changes are read by the scene loop, never by remounting WebGL.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [presentation === 'still']);
 
   return (
-    <section className={`city-core city-${mood} mode-${mode}${paused ? " city-paused" : ""}${!available ? " city-unavailable" : ""}`} aria-label="Horizon city view">
+    <section className={`city-core city-${mood} city-presentation-${presentation} mode-${mode}${paused ? " city-paused" : ""}${!available ? " city-unavailable" : ""}`} aria-label="Horizon city view">
       <div className="city-heading"><span />YOUR NEXT HORIZON<span /></div>
       <div className="city-portal">
         <div className="city-aperture">
@@ -203,7 +208,7 @@ export default function CityCore({ mode = "idle", strands, readout, getLevel, ce
           <button className="city-icon-button" type="button" onClick={() => setPaused(!paused)} aria-label={paused ? "Resume city motion" : "Pause city motion"} aria-pressed={paused} disabled={reduced || !available} title={reduced ? "Motion follows your reduced-motion preference" : paused ? "Resume motion" : "Pause motion"}>
             {paused || reduced ? <svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true"><path d="m5 3 7 5-7 5Z" fill="currentColor" /></svg> : <svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3v10M11 3v10" fill="none" stroke="currentColor" strokeWidth="2" /></svg>}
           </button>
-          <button className="city-icon-button" type="button" onClick={() => setReveal(r => r + 1)} aria-label="Replay city opening" disabled={reduced || paused} title="Replay opening"><svg width="14" height="14" viewBox="0 0 18 18" aria-hidden="true"><path d="M3 7a6 6 0 1 1 0 5M3 3v4h4" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
+          <button className="city-icon-button" type="button" onClick={() => setReveal(r => r + 1)} aria-label="Replay city opening" disabled={reduced || paused || !available} title="Replay opening"><svg width="14" height="14" viewBox="0 0 18 18" aria-hidden="true"><path d="M3 7a6 6 0 1 1 0 5M3 3v4h4" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
         </div>
       </div>
     </section>
