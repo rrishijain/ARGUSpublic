@@ -7,4 +7,6 @@ numpy==2.2.6
 # universal2 wheels support Intel and Apple Silicon on macOS 13.
 onnxruntime==1.20.1
 ctranslate2==4.6.0
+# CTranslate2 4.6.0 uses pkg_resources for Windows DLL discovery; removed in setuptools 82.
+setuptools==81.0.0
 av==15.1.0

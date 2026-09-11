@@ -4,10 +4,12 @@ This is the ARGUS 2.0 beta validation guide. Separate automated coverage, curren
 
 ## Recorded release evidence — 11 September 2026
 
-- All 75 Node tests and all 9 Chromium browser tests pass. Type checking and the production build pass on the development Mac. The npm dependency audit reports zero known vulnerabilities at this checkpoint.
+- All 76 Node tests and all 9 Chromium browser tests pass. Type checking and the production build pass on the development Mac. The npm dependency audit reports zero known vulnerabilities at this checkpoint.
 - Three real authenticated Codex calls used fictional Juniper Lantern business context. The first saved a target of 17 (14.8 seconds); the follow-up recalled that target (18.3 seconds). A subsequent build request produced a valid feature-build proposal and a compiled tracker with only records.read/records.write capabilities and three demonstration records (73.5 seconds). The build required no automatic repair.
 - The installed Kokoro/faster-whisper stack completed a real generated-speech round trip: synthesis took 290 ms and transcription 779 ms for the test sentence. These are one-machine observations, not promised response times.
 - A two-turn Chrome audio check exercised local voice-activity detection, submission and playback. The test reply played for 2.03 seconds before listening resumed. This controlled audio test does not establish human microphone or Indian-accent recognition quality.
+- The production Next.js browser path also passed with real local speech/transcription and controlled AI replies: two automatic turns, no live microphone tracks during playback, tap interruption in 74 ms, all tracks released on exit, and typed fallback after simulated microphone denial. Repeat with `node scripts/voice-browser-check.mjs --production` while the app and local voice service are running.
+- A clean GitHub commit ZIP installed with `npm ci` and passed all 75 Node tests, type checking and production build without Git metadata or copied personal/runtime state. This Mac still had global Git/Python available; the test does not claim those programs were physically absent.
 - A human participant pilot, including Indian accents, has not been performed. Hosted platform installation results and physical device coverage remain separate release evidence.
 
 ## Automated coverage
